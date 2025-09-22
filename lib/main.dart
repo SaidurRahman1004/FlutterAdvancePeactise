@@ -1,0 +1,82 @@
+import 'package:flutter/material.dart';
+
+import 'Hive/mainHiveCode.dart';
+
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // 1. Hive Flutter ইম্পোর্ট করুন
+import 'Hive/mainHiveCode.dart';
+import 'Hive/task_model.dart'; // 2. আপনার Task মডেল ইম্পোর্ট করুন (Adapter রেজিস্টার করার জন্য)
+import 'package:provider/provider.dart';
+
+import 'HiveTask/taskHimeModel.dart';
+import 'HiveTask/task_page_ui.dart';
+import 'haive Ex Wishlist/product_screen.dart';
+import 'haive Ex Wishlist/wishListProduct_model.dart';
+import 'haive Ex Wishlist/wishlist_providerLogic.dart';
+
+
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized(); // ensure Start Flutter engine
+  Hive.initFlutter(); //
+  Hive.registerAdapter(taskModelHAdapter()); // Adapter Register
+  await Hive.openBox<taskModelH>("tasksBox");
+
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+      home: taskPageUi()));
+}
+
+////wishProduct
+/*
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();  //// ensure Start Flutter engine
+  await Hive.initFlutter();  //Start Hive
+  Hive.registerAdapter(wishProductAdapter()); // wishProductAdapter Adapter Register from wishListProduct_model.dart
+  await Hive.openBox<wishProduct>("wishListControlElement"); // wishListControlElement Box Open
+
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WishlistProvider(),
+      child:  wishListUi(),
+    ),
+  );
+}
+
+ */
+
+
+/////Hive Main
+/*
+void main() async { // 3. main() ফাংশনকে async করুন
+
+  // 4. ফ্লাটার অ্যাপ শুরু করার আগে সব প্লাগইন যেন ঠিকমতো চালু হয় তা নিশ্চিত করুন
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 5. Hive চালু করুন
+  await Hive.initFlutter();
+
+  // 6. আপনার কাস্টম অবজেক্ট (Task) এর জন্য Adapter রেজিস্টার করুন
+  Hive.registerAdapter(TaskAdapter());
+
+  // 7. 'tasks' নামের বক্সটি খুলুন। এটি একটি Future, তাই await ব্যবহার করুন
+  await Hive.openBox<Task>('tasks');
+
+  // 8. এখন আপনার অ্যাপ রান করুন
+  runApp(MaterialApp(
+    home: TaskScreen(),
+  ));
+}
+
+
+ */
+// আপনার বাকি কোড (যেমন MyApp ক্লাস) অপরিবর্তিত থাকতে পারে
+//Temp
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
