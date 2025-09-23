@@ -42,10 +42,13 @@ class _ContactScreenState extends State<ContactScreen> {
   }
   //edit Contact logic
   _editContact(int index){
-    contactBoxStore.putAt(index, ContactModle(name: nameController.text, phoneNumber: phoneNumberController.text));
-    nameController.clear();
-    phoneNumberController.clear();
-    Navigator.of(context).pop();
+    if(nameController.text.isNotEmpty && phoneNumberController.text.isNotEmpty){
+      contactBoxStore.putAt(index, ContactModle(name: nameController.text, phoneNumber: phoneNumberController.text));
+      nameController.clear();
+      phoneNumberController.clear();
+      Navigator.of(context).pop();
+    }
+
 
   }
 
