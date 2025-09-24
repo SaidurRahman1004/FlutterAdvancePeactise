@@ -6,13 +6,27 @@ import 'package:hive_flutter/hive_flutter.dart'; // 1. Hive Flutter ইম্প
 import 'package:provider/provider.dart';
 import 'HivePracTiseAll/Contact Book Hive Practise gmn/ContactMainUi.dart';
 import 'HivePracTiseAll/Contact Book Hive Practise gmn/ContactModle.dart';
+import 'HivePracTiseAll/NoteApp/note_app_model.dart';
+import 'HivePracTiseAll/NoteApp/note_ui.dart';
 import 'HiveTask/taskHimeModel.dart';
 import 'HiveTask/task_page_ui.dart';
 import 'haive Ex Wishlist/product_screen.dart';
 import 'haive Ex Wishlist/wishListProduct_model.dart';
 import 'haive Ex Wishlist/wishlist_providerLogic.dart';
 
+
+///////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\NoteApp
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized(); // ensure Start Flutter engine
+  await Hive.initFlutter(); //
+  Hive.registerAdapter(noteModleAdapter()); // Adapter Register
+  await Hive.openBox<noteModle>("noteBox"); // Box Open
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: noteScreen()));
+}
+//////////////////////
+
 ///D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\Contact Book Hive Practise gmn///////
+/*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ensure Start Flutter engine
   await Hive.initFlutter(); //initial Hive
@@ -20,6 +34,8 @@ void main() async {
   await Hive.openBox<ContactModle>("contactBox"); // Box Open
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: ContactScreen()));
 }
+
+ */
 ///////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\Hive Ai Test\TransactionScreen.dart////////
 /*
 void main() async {
