@@ -153,7 +153,9 @@ class _noteScreenState extends State<noteScreen> {
                           title: "Edit Yourr Note",
                           nameController: titleController,
                           contentController: contentController,
-                          onSave: (){_editNote(index);},
+                          onSave: () {
+                            _editNote(index);
+                          },
                         );
                       },
                       icon: Icon(Icons.edit, color: Colors.blue),
