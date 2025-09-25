@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Hive Ai Test/TransactionScreen.dart';
 import 'Hive Ai Test/transaction.dart';
@@ -10,12 +12,48 @@ import 'HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'HivePracTiseAll/NoteApp/note_ui.dart';
 import 'HiveTask/taskHimeModel.dart';
 import 'HiveTask/task_page_ui.dart';
-import 'firebase All/FireBaseGpt/firebaseGpt.dart';
+import 'firebase All/FireBaseGpt/mainAp_screen.dart';
+import 'firebase All/FireBaseGpt/singUp_contact_page.dart';
+
+import 'firebase All/FireBaseGpt/login_contact_page.dart';
+import 'firebase All/TestfB/HomeScreen.dart';
+import 'firebase All/TestfB/LoginScreen.dart';
 import 'haive Ex Wishlist/product_screen.dart';
 import 'haive Ex Wishlist/wishListProduct_model.dart';
 import 'haive Ex Wishlist/wishlist_providerLogic.dart';
 
+
+////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_page.dart///
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: contactFirebaseauth(),
+  ));
+}
+
+class contactFirebaseauth extends StatelessWidget {
+  const contactFirebaseauth({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (_,snapshot){
+            if(!snapshot.hasData){
+              return const LoginScreenCp();
+            }
+            return HomeScreenC();
+          }
+      ),
+    );
+  }
+}
+
 ///////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt
+/*
 import 'package:firebase_core/firebase_core.dart';
 import '../../firebase_options.dart';
 
@@ -24,8 +62,35 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(FirebaseUi());
+  runApp(MaterialApp(debugShowCheckedModeBanner: false,home: AuthGate()));
 }
+
+//Auth Gate
+
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+        // authStateChanges() stream-টি Auth State পরিবর্তন ট্র্যাক করে
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // ব্যবহারকারী লগইন করা অবস্থায় নেই
+          if (!snapshot.hasData) {
+            return LoginScreen(); // লগইন স্ক্রিন দেখাও
+          }
+          // ব্যবহারকারী লগইন করা অবস্থায় আছেন
+          return HomeScreen(); // হোম স্ক্রিন দেখাও
+        },
+      ),
+    );
+  }
+}
+
+ */
 
 ///////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\NoteApp
 /*
