@@ -10,12 +10,25 @@ import 'HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'HivePracTiseAll/NoteApp/note_ui.dart';
 import 'HiveTask/taskHimeModel.dart';
 import 'HiveTask/task_page_ui.dart';
+import 'firebase All/FireBaseGpt/firebaseGpt.dart';
 import 'haive Ex Wishlist/product_screen.dart';
 import 'haive Ex Wishlist/wishListProduct_model.dart';
 import 'haive Ex Wishlist/wishlist_providerLogic.dart';
 
+///////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt
+import 'package:firebase_core/firebase_core.dart';
+import '../../firebase_options.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(FirebaseUi());
+}
 
 ///////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\NoteApp
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized(); // ensure Start Flutter engine
   await Hive.initFlutter(); //
@@ -23,6 +36,8 @@ void main() async{
   await Hive.openBox<noteModle>("noteBox"); // Box Open
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: noteScreen()));
 }
+
+ */
 //////////////////////
 
 ///D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\Contact Book Hive Practise gmn///////
