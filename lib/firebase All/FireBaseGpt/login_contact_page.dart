@@ -7,7 +7,34 @@ import 'package:hive/hive.dart';
 import '../../HivePracTiseAll/NoteApp/note_app_model.dart';
 import '../../HivePracTiseAll/NoteApp/note_ui.dart';
 import '../../Custom Widgte/InputTextFeild.dart';
+import 'mainAp_screen.dart';
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: contactFirebaseauth(),
+  ));
+}
 
+class contactFirebaseauth extends StatelessWidget {
+  const contactFirebaseauth({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (_,snapshot){
+            if(!snapshot.hasData){
+              return const LoginScreenCp();
+            }
+            return HomeScreenC();
+          }
+      ),
+    );
+  }
+}
 
 //login Screen
 class LoginScreenCp extends StatefulWidget {
