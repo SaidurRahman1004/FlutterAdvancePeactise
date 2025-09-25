@@ -1,29 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'Hive Ai Test/TransactionScreen.dart';
-import 'Hive Ai Test/transaction.dart';
-import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart'; // 1. Hive Flutter ইম্পোর্ট করুন
-import 'package:provider/provider.dart';
-import 'HivePracTiseAll/Contact Book Hive Practise gmn/ContactMainUi.dart';
-import 'HivePracTiseAll/Contact Book Hive Practise gmn/ContactModle.dart';
-import 'HivePracTiseAll/NoteApp/note_app_model.dart';
-import 'HivePracTiseAll/NoteApp/note_ui.dart';
-import 'HiveTask/taskHimeModel.dart';
-import 'HiveTask/task_page_ui.dart';
-import 'firebase All/FireBaseGpt/mainAp_screen.dart';
-import 'firebase All/FireBaseGpt/singUp_contact_page.dart';
 
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
-import 'firebase All/TestfB/HomeScreen.dart';
-import 'firebase All/TestfB/LoginScreen.dart';
-import 'haive Ex Wishlist/product_screen.dart';
-import 'haive Ex Wishlist/wishListProduct_model.dart';
-import 'haive Ex Wishlist/wishlist_providerLogic.dart';
+import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 
-
-////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_page.dart///
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -45,12 +26,44 @@ class contactFirebaseauth extends StatelessWidget {
             if(!snapshot.hasData){
               return const LoginScreenCp();
             }
-            return HomeScreenC();
+            return homecontact();
           }
       ),
     );
   }
 }
+
+
+////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_page.dart///
+/*
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    home: contactFirebaseauth(),
+  ));
+}
+
+class contactFirebaseauth extends StatelessWidget {
+  const contactFirebaseauth({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (_,snapshot){
+            if(!snapshot.hasData){
+              return LoginScreen ();
+            }
+            return HomeScreen();
+          }
+      ),
+    );
+  }
+}
+
+ */
 
 ///////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt
 /*
@@ -91,6 +104,8 @@ class AuthGate extends StatelessWidget {
 }
 
  */
+
+
 
 ///////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\NoteApp
 /*

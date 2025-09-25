@@ -1,34 +1,52 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreenC extends StatelessWidget {
-  const HomeScreenC({super.key});
+import '../../HivePracTiseAll/Contact Book Hive Practise gmn/ContactMainUi.dart';
+
+class homecontact extends StatelessWidget {
+   homecontact({super.key});
+  final User? usercn = FirebaseAuth.instance.currentUser;
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // বর্তমানে লগইন থাকা ব্যবহারকারীর তথ্য পাওয়া
-    final user = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text("ContactPage"),
         actions: [
-          // লগআউট করার জন্য IconButton
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              // সাইন আউট সফল হলে AuthGate স্বয়ংক্রিয়ভাবে লগইন পেজে নিয়ে যাবে
-            },
-          )
+            tooltip: 'Logout',
+            icon: Icon(Icons.logout),
+            onPressed: signOut,
+          ),
         ],
       ),
       body: Center(
-        // ব্যবহারকারীর ইমেইল দেখানো হচ্ছে
-        child: Text(
-          'Welcome!\nYou are logged in as:\n${user?.email}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Successfully Logged In!',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "Email: ${usercn?.email ?? "No email found"}",
+              style: const TextStyle(fontSize: 16),
+            ),
+
+            Text(
+              "UID: ${usercn?.uid ?? "No UID found"}",
+              style: const TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 20,),
+            ElevatedButton(onPressed: (){
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ContactScreen()));
+            }, child: Text("Go To Contact"),
+            ),
+          ],
         ),
       ),
     );

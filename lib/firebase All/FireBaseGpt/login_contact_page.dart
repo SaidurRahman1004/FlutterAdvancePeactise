@@ -8,6 +8,7 @@ import '../../HivePracTiseAll/NoteApp/note_app_model.dart';
 import '../../HivePracTiseAll/NoteApp/note_ui.dart';
 import '../../Custom Widgte/InputTextFeild.dart';
 import 'mainAp_screen.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -29,12 +30,13 @@ class contactFirebaseauth extends StatelessWidget {
             if(!snapshot.hasData){
               return const LoginScreenCp();
             }
-            return HomeScreenC();
+            return homecontact();
           }
       ),
     );
   }
 }
+
 
 //login Screen
 class LoginScreenCp extends StatefulWidget {
