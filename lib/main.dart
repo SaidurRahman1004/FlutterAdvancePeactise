@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'Custom Widgte/CotactListFnDumpOstad.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 import 'ostad_flutter_Assignment/contact_list_app.dart';
@@ -11,7 +12,7 @@ import 'ostad_flutter_Assignment/contact_list_app.dart';
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: contactListApp(),
+    home: contactListAppDm1(),
   ));
 }
 
