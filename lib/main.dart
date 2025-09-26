@@ -4,7 +4,19 @@ import 'package:flutter/material.dart';
 
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
+import 'ostad_flutter_Assignment/contact_list_app.dart';
 
+
+
+void main() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: contactListApp(),
+  ));
+}
+
+//////////////////////////////
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -32,6 +44,8 @@ class contactFirebaseauth extends StatelessWidget {
     );
   }
 }
+
+ */
 
 
 ////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_page.dart///
