@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'custom_text_feild.dart';
+
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -7,12 +9,7 @@ void main() {
   ));
 }
 
-class Contact{
-  final String Name;
-  final String Number;
 
-  Contact({required this.Name, required this.Number});
-}
 
 class contactListApp extends StatefulWidget {
   const contactListApp({super.key});
@@ -24,39 +21,14 @@ class contactListApp extends StatefulWidget {
 class _contactListAppState extends State<contactListApp> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
-  List<Contact> contacts = [];
-  
-  //contact add function
-  void _addContact(){
-    final name = _nameController.text.trim();
-    final number = _numberController.text.trim();
-    if(name.isNotEmpty && number.isNotEmpty){
-      final newContact = Contact(Name: name, Number: number);
-      setState(() {
-        contacts.add(newContact);
-      });
-      _nameController.clear();
-      _numberController.clear();
-    }
-  }
-  
-  //delet Contact
-  _deleteContact(int index){
-    showDialog(context: context, builder: (_)=>AlertDialog(
-      title: Text("Confirmation"),
-      content: Text("Are you sure you want to delete this contact?"),
-      actions: [
-        IconButton(onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.close, color: Colors.grey)),
-        IconButton(onPressed: (){
-          setState(() {
-            contacts.removeAt(index);
-          });
-          Navigator.of(context).pop();
-        }, icon: Icon(Icons.delete, color: Colors.red))
-      ],
-    ));
+  final List<Map<String, String>> contacts = const [
+    {"name": "Jawad", "number": "01877-777777"},
+    {"name": "Ferdous", "number": "01677-777777"},
+    {"name": "Hasan", "number": "01745-777777"},
+    {"name": "Hasan", "number": "01745-777777"},
+    {"name": "Hasan", "number": "01745-777777"},
+  ];
 
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +37,39 @@ class _contactListAppState extends State<contactListApp> {
         centerTitle: true,
         backgroundColor: Colors.black12,
       ),
-      body: Column(),
+      body: Column(
+        children: [
+          Padding(padding: 
+          EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                CustomTextFieldos(controller: _nameController,labelText: "Name",),
+                SizedBox(height: 10,),
+                CustomTextFieldos(controller: _numberController,keyboardType: TextInputType.phone,labelText: "Number",),
+                SizedBox(height: 10,),
+                ElevatedButton(onPressed: (){}, child: Text("Add Contact")),
+              ],
+            ),
+          ),
+          Expanded(child: ListView.builder(
+            itemCount: contacts.length,
+              itemBuilder: (_,index){
+                final contact = contacts[index];
+                return Card(
+                  elevation: 5,
+                  child: ListTile(
+                    leading: Icon(Icons.person, color: Colors.brown),
+                    title: Text(contact["name"] ?? "",style: TextStyle(                        color: Colors.red,
+                      fontWeight: FontWeight.bold,),),
+                    subtitle: Text(contact["number"] ?? ""),
+                    trailing: Icon(Icons.call, color: Colors.blue),
+                  ),
+                );
+
+              },
+          ))
+        ],
+      ),
 
     );
   }
