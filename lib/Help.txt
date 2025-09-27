@@ -1,0 +1,7 @@
+find sha1:
+ডিবাগ keystore থেকে:
+keytool -list -v -keystore "C:\Users\siyam\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+Gradle signingReport দিয়ে:
+cd D:\CodesApplication\Flutter\fluttert_test_code\android
+.\gradlew.bat signingReport

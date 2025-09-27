@@ -5,17 +5,39 @@ import 'package:flutter/material.dart';
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
+import 'firebase All/Firebase Google Auth/login_contact_pageG.dart';
+import 'firebase All/Firebase Google Auth/mainAp_screenG.dart';
 import 'ostad_flutter_Assignment/contact_list_app.dart';
 
 
-
-void main() {
-  runApp(const MaterialApp(
+//......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: contactListAppDm1(),
+    home: contactFirebaseauth2(),
   ));
 }
 
+class contactFirebaseauth2 extends StatelessWidget {
+  const contactFirebaseauth2({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (_,snapshot){
+            if(snapshot.hasData){
+              return  homecontactG();
+            }
+            return LoginScreenCpG();
+          }
+      ),
+    );
+  }
+}
 //////////////////////////////
 /*
 void main() async{
@@ -49,7 +71,7 @@ class contactFirebaseauth extends StatelessWidget {
  */
 
 
-////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_page.dart///
+////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_pageG.dart///
 /*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
