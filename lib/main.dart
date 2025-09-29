@@ -1,22 +1,41 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
+import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
+import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projects.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
+import 'FirebaseFireStore/TestFirestore/HomeScreenFb.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 import 'firebase All/Firebase Google Auth/login_contact_pageG.dart';
 import 'firebase All/Firebase Google Auth/mainAp_screenG.dart';
 import 'ostad_flutter_Assignment/contact_list_app.dart';
 
-
+////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
+void main() {
+  runApp(
+      ChangeNotifierProvider(
+        create: (_)=>ProductProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: ProviderProjApiIn(),
+        ),
+      )
+  );
+}
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: contactFirebaseauth2(),
+    home: HomeScreenFb(),
   ));
 }
 
@@ -38,6 +57,7 @@ class contactFirebaseauth2 extends StatelessWidget {
     );
   }
 }
+*/
 //////////////////////////////
 /*
 void main() async{
@@ -69,7 +89,6 @@ class contactFirebaseauth extends StatelessWidget {
 }
 
  */
-
 
 ////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FireBaseGpt\login_contact_pageG.dart///
 /*
@@ -142,19 +161,17 @@ class AuthGate extends StatelessWidget {
 
  */
 
-
-
 ///////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\NoteApp
 /*
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ensure Start Flutter engine
   await Hive.initFlutter(); //
   Hive.registerAdapter(noteModleAdapter()); // Adapter Register
   await Hive.openBox<noteModle>("noteBox"); // Box Open
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: noteScreen()));
 }
+*/
 
- */
 //////////////////////
 
 ///D:\CodesApplication\Flutter\fluttert_test_code\lib\HivePracTiseAll\Contact Book Hive Practise gmn///////
