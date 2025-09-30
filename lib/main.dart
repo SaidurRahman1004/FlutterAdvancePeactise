@@ -9,14 +9,51 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
-import 'FirebaseFireStore/TestFirestore/HomeScreenFb.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 import 'firebase All/Firebase Google Auth/login_contact_pageG.dart';
 import 'firebase All/Firebase Google Auth/mainAp_screenG.dart';
+import 'firebase All/TestfB/widgets/auth_wrapper.dart';
 import 'ostad_flutter_Assignment/contact_list_app.dart';
 
+
+/////test FireBase
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+/*
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(const MyAppFireBaseApiAiTest());
+}
+
+class MyAppFireBaseApiAiTest extends StatelessWidget {
+  const MyAppFireBaseApiAiTest({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firebase Auth Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const AuthWrapper(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+ */
+
 ////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
+/*
 void main() {
   runApp(
       ChangeNotifierProvider(
@@ -28,19 +65,21 @@ void main() {
       )
   );
 }
+
+ */
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
-/*
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: HomeScreenFb(),
+    home: contactFirebaseauth(),
   ));
 }
 
-class contactFirebaseauth2 extends StatelessWidget {
-  const contactFirebaseauth2({super.key});
+class contactFirebaseauth extends StatelessWidget {
+  const contactFirebaseauth({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +87,16 @@ class contactFirebaseauth2 extends StatelessWidget {
       body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (_,snapshot){
-            if(snapshot.hasData){
-              return  homecontactG();
+            if(!snapshot.hasData){
+              return const LoginScreenCpG();
             }
-            return LoginScreenCpG();
+            return homecontactG();
           }
       ),
     );
   }
 }
-*/
+
 //////////////////////////////
 /*
 void main() async{

@@ -31,20 +31,16 @@ class _SignUpContactScreenState extends State<SignUpContactScreenG> {
         email: _textEmail.text.trim(),
         password: _textPassword.text.trim(),
       );
-
-      User? user = userCredential.user;
-      await user?.updateDisplayName(_textUserName.text.trim());
-
-        await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user?.uid)
-          .set({
-        "uid": user?.uid,
-        "email": _textEmail.text.trim(),
-        "username": _textUserName.text.trim(),
-        "phone": _textPhone.text.trim(),
-        "createdAt": FieldValue.serverTimestamp(),
-      });
+      //ডেটা তৈরি করা (Create Operation)
+      if(userCredential.user != null){
+        await FirebaseFirestore.instance.collection("RegUsers").doc(userCredential.user!.uid).set({
+          "uid" : userCredential.user!.uid,
+          "email" : _textEmail.text.trim(),
+          "username" : _textUserName.text.trim(),
+          "phone" : _textPhone.text.trim(),
+          "createdAt" : Timestamp.now(),
+        });
+      }
 
       // রেজিস্ট্রেশন সফল হলে ব্যবহারকারী স্বয়ংক্রিয়ভাবে লগইন হয়ে যাবে
       // তাই আগের স্ক্রিনে ফিরে যাই (AuthGate তাকে হোমপেজে পাঠাবে)
