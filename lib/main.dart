@@ -9,6 +9,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
+import 'FirebaseFireStore/TestFirestore/contact_store.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 import 'firebase All/Firebase Google Auth/login_contact_pageG.dart';
@@ -22,6 +23,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+//////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
+
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: contactListWitheFbFirestore(),
+  ));
+}
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,7 +82,7 @@ void main() {
 
  */
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
-
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -96,6 +110,8 @@ class contactFirebaseauth extends StatelessWidget {
     );
   }
 }
+
+ */
 
 //////////////////////////////
 /*
