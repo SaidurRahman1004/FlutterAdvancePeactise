@@ -22,10 +22,9 @@ import 'ostad_flutter_Assignment/contact_list_app.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
 
-
+   /*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -36,6 +35,8 @@ void main() async{
     home: contactListWitheFbFirestore(),
   ));
 }
+
+    */
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +68,7 @@ class MyAppFireBaseApiAiTest extends StatelessWidget {
  */
 
 ////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
-/*
+
 void main() {
   runApp(
       ChangeNotifierProvider(
@@ -80,7 +81,7 @@ void main() {
   );
 }
 
- */
+
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
 /*
 void main() async{
