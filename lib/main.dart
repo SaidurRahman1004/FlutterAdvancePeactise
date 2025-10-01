@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
@@ -7,24 +7,90 @@ import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projec
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
-
+import 'firebase_options.dart';
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
 import 'FirebaseFireStore/TestFirestore/contact_store.dart';
 import 'firebase All/FireBaseGpt/login_contact_page.dart';
 import 'firebase All/FireBaseGpt/mainAp_screen.dart';
 import 'firebase All/Firebase Google Auth/login_contact_pageG.dart';
 import 'firebase All/Firebase Google Auth/mainAp_screenG.dart';
+import 'firebase All/TestfB/HomeScreen.dart';
 import 'firebase All/TestfB/widgets/auth_wrapper.dart';
 import 'ostad_flutter_Assignment/contact_list_app.dart';
-
 
 /////test FireBase
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+//////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
+import 'firebase_options.dart'; // flutterfire configure দিয়ে তৈরি হওয়া ফাইল
+/*
+void main() async {
+  // Flutter বাইন্ডিং শুরু হয়েছে কিনা তা নিশ্চিত করা
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase শুরু করা
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(const MyAppReFbCurd());
+}
+
+class MyAppReFbCurd extends StatelessWidget {
+  const MyAppReFbCurd({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firebase Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        brightness: Brightness.dark, // ডার্ক থিম
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      // অ্যাপের হোম হিসেবে AuthGate সেট করা হলো
+      home: const AuthGate(),
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // যদি স্ট্রিম থেকে এখনো কোনো ডেটা না আসে
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // যদি snapshot-এ ডেটা থাকে, তার মানে ব্যবহারকারী লগইন করা আছে
+        if (snapshot.hasData) {
+          return const HomeScreen(); // হোম স্ক্রিনে পাঠানো হলো
+        }
+
+        // যদি snapshot-এ ডেটা না থাকে, তার মানে ব্যবহারকারী লগইন করা নেই
+        return const LoginScreen(); // লগইন স্ক্রিনে পাঠানো হলো
+      },
+    );
+  }
+}
+
+ */
+//.................................................
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
 
-   /*
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -68,7 +134,7 @@ class MyAppFireBaseApiAiTest extends StatelessWidget {
  */
 
 ////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
-
+/*
 void main() {
   runApp(
       ChangeNotifierProvider(
@@ -81,16 +147,18 @@ void main() {
   );
 }
 
+ */
+
+
 
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
-/*
-void main() async{
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: contactFirebaseauth(),
-  ));
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const contactFirebaseauth());
 }
 
 class contactFirebaseauth extends StatelessWidget {
@@ -98,21 +166,35 @@ class contactFirebaseauth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (_,snapshot){
-            if(!snapshot.hasData){
-              return const LoginScreenCpG();
-            }
-            return homecontactG();
-          }
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const AuthGate(),
     );
   }
 }
 
- */
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasData) {
+          return const homecontactG();
+        }
+        return const LoginScreenCpG();
+      },
+    );
+  }
+}
+
+
+
 
 //////////////////////////////
 /*
@@ -152,6 +234,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: contactFirebaseauth(),
   ));
 }
@@ -166,9 +249,9 @@ class contactFirebaseauth extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (_,snapshot){
             if(!snapshot.hasData){
-              return LoginScreen ();
+              return const LoginScreenCp();
             }
-            return HomeScreen();
+            return homecontact();
           }
       ),
     );

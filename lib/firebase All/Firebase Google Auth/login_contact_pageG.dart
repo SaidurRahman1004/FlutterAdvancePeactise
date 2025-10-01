@@ -179,7 +179,9 @@ class _LoginScreenCpGState extends State<LoginScreenCpG> {
                             children: [
                               OutlinedButton(onPressed: _SingIn, child: const Text("Sign in")),
                               const SizedBox(height: 30,),
-                              ElevatedButton.icon(onPressed: (){}, label: Text("Google"),icon: Image.asset('assets/google_logo.png', height: 24.0),),
+                              ElevatedButton.icon(onPressed: (){
+                                SigninGoogle();
+                              }, label: Text("Google"),icon: Image.asset('assets/google_logo.png', height: 24.0),),
 
 
 

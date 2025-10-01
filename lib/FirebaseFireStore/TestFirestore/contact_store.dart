@@ -146,7 +146,7 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
                         subtitle: Text(dataControl["Number"]??""),
                         trailing: Icon(Icons.call, color: Colors.blue),
                         onLongPress: () =>
-                        _deleteContact( dataControl.id ),
+                            _deleteContact( dataControl.id ),
                       ),
                     );
                   },
