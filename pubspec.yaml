@@ -20,14 +20,15 @@ dependencies:
   # NETWORKING
   http: ^1.2.1 # Updated to latest stable version
   # FIREBASE (ALL UPDATED TO BE COMPATIBLE)
-  firebase_core: ^3.1.1
+  firebase_core: ^3.3.0
   firebase_auth: ^5.1.1
   cloud_firestore: ^5.6.12
   firebase_messaging: ^15.0.2 # Dependent on other Firebase versions
-  firebase_storage: ^12.0.2  # Dependent on other Firebase versions
+  firebase_storage: ^12.4.10 # Dependent on other Firebase versions
   # GOOGLE SIGN IN (UPDATED)
   google_sign_in: ^6.2.1
   shared_preferences: ^2.5.3
+  image_picker: ^1.2.0
 
 
 

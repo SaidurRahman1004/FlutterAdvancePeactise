@@ -22,6 +22,8 @@ import 'ostad_flutter_Assignment/contact_list_app.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 //////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
 import 'firebase_options.dart'; // flutterfire configure দিয়ে তৈরি হওয়া ফাইল
@@ -90,19 +92,29 @@ class AuthGate extends StatelessWidget {
 //.................................................
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
 
-/*
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  if(kDebugMode){
+    try{
+      await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+      print("✅ Firebase Storage Emulator successfully connected!");
+    }catch (e){
+      print("❗️ Error connecting to Firebase Storage Emulator: $e");
+    }
+  }
+
+
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: contactListWitheFbFirestore(),
   ));
 }
 
-    */
+
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -152,7 +164,62 @@ void main() {
 
 
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
+//Firebase Emolator  firebase emulators:start --only storage
+/*
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+  );
+  if (kDebugMode) {
+    try{
+      await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+      print("✅ Firebase Storage Emulator successfully connected!");
+    }catch(e){
+      print("❗️ Error connecting to Firebase Storage Emulator: $e");
+    }
+
+  }
+  runApp(const contactFirebaseauth());
+}
+
+class contactFirebaseauth extends StatelessWidget {
+  const contactFirebaseauth({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const AuthGate(),
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasData) {
+          return const homecontactG();
+        }
+        return const LoginScreenCpG();
+      },
+    );
+  }
+}
+
+ */
+
+
+/*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -195,6 +262,7 @@ class AuthGate extends StatelessWidget {
 
 
 
+ */
 
 //////////////////////////////
 /*

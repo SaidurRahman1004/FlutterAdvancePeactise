@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../Custom Widgte/InputTextFeild.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 /*
 void main() {
@@ -24,6 +27,7 @@ class contactListWitheFbFirestore extends StatefulWidget {
 class _contactListAppState extends State<contactListWitheFbFirestore> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
+  bool _isUploading = false;
 
   //contact add function r
   void _addContact() async {
@@ -69,6 +73,62 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
         ],
       ),
     );
+  }
+
+  //Add Profile image fn
+  Future<void> _imageSelection() async {
+    final ImagePicker pickimg = ImagePicker();
+    final XFile? imageSrchoice = await pickimg.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (imageSrchoice == null) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      final String Filepath =
+          "note_images/${FirebaseAuth.instance.currentUser!.uid}";
+      final File imageFile = File(imageSrchoice.path);
+
+      await FirebaseStorage.instance.ref(Filepath).putFile(imageFile);
+      final downloadUrl = await FirebaseStorage.instance
+          .ref(Filepath)
+          .getDownloadURL();
+      await FirebaseFirestore.instance
+          .collection("ContactList")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({"imageUrl": downloadUrl});
+
+      if (mounted) {
+        // Check if the widget is still mounted
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Profile Picture Updated Successfully"),
+            backgroundColor: Colors.green,
+          ), // Success message
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        // Check if the widget is still mounted
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to upload image: $e"),
+            backgroundColor: Colors.red,
+          ), // Error message
+        );
+      }
+    } finally {
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          _isUploading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -140,13 +200,15 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
                         leading: CircleAvatar(
                           backgroundColor: Colors.blueGrey,
                           foregroundColor: Colors.white,
-                          child: Text(dataControl['Name'][0],style: const TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(
+                            dataControl['Name'][0],
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                         title: Text(dataControl["Name"]),
-                        subtitle: Text(dataControl["Number"]??""),
+                        subtitle: Text(dataControl["Number"] ?? ""),
                         trailing: Icon(Icons.call, color: Colors.blue),
-                        onLongPress: () =>
-                            _deleteContact( dataControl.id ),
+                        onLongPress: () => _deleteContact(dataControl.id),
                       ),
                     );
                   },

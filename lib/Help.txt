@@ -5,3 +5,36 @@ keytool -list -v -keystore "C:\Users\siyam\.android\debug.keystore" -alias andro
 Gradle signingReport দিয়ে:
 cd D:\CodesApplication\Flutter\fluttert_test_code\android
 .\gradlew.bat signingReport
+
+
+Clean Arch
+
+lib/
+├── main.dart
+├── app.dart                 # MaterialApp বা CupertinoApp থাকবে এখানে
+├── core/                    # অ্যাপের জন্য সাধারণ জিনিসপত্র
+│   ├── constants/
+│   ├── themes/
+│   └── utils/
+├── data/                    # ডেটা সোর্স সম্পর্কিত (Repository, DataSource)
+│   ├── repositories/
+│   └── datasources/
+├── domain/                  # বিজনেস লজিক (Models, Use Cases)
+│   ├── entities/            # বা models/
+│   └── usecases/
+├── features/                # ফিচার ভিত্তিক স্ট্রাকচার (সবচেয়ে জনপ্রিয়)
+│   ├── auth/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       ├── pages/
+│   │       └── widgets/
+│   └── todos/
+│       ├── data/
+│       ├── domain/
+│       └── presentation/
+│           ├── providers/
+│           ├── pages/
+│           └── widgets/
+└── providers/               # যদি অ্যাপ ছোট হয়, সব প্রোভাইডার এখানে রাখতে পারেন

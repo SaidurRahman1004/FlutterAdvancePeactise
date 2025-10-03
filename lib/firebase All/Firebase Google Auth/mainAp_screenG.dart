@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../Custom Widgte/CotactListFnDumpOstad.dart';
 import '../../FirebaseFireStore/TestFirestore/contact_store.dart';
@@ -17,6 +20,7 @@ class homecontactG extends StatefulWidget {
 class _homecontactGState extends State<homecontactG> {
   final _usernameEditController = TextEditingController();
   final _phoneEditController = TextEditingController();
+  bool _isUpladingImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +44,53 @@ class _homecontactGState extends State<homecontactG> {
       await FirebaseAuth.instance.signOut();
     }
 
+    //Select And Upload Image Fun
+    Future<void> _selectAndUploadImage() async {
+      final ImagePicker picker = ImagePicker();                                       // Image Picker instance
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);     // Pick an image From gallery
+      if(image == null) return;
+      setState(() {
+        _isUpladingImage = true;  // Uploading start
+      });// যদি ইউজার ছবি সিলেক্ট না করে তাহলে ফাংশন থেকে বের হয়ে আসবে
+
+      // Upload to Firebase Storage
+      try{
+        final String filePatcRef = "profile_pictures/${currentUser!.uid}"; // File path in Firebase Storage
+        final File imgFile = File(image.path); // Convert XFile to File
+
+        await FirebaseStorage.instance.ref(filePatcRef).putFile(imgFile); // Upload file to Firebase Storage
+        final String downloadUrl = await FirebaseStorage.instance.ref(filePatcRef).getDownloadURL(); // Get download URL
+        await FirebaseFirestore.instance.collection("RegUsers").doc(currentUser!.uid).update(  // Update Firestore with new profile picture URL
+          {
+            "profilePicture" : downloadUrl,
+          }
+        );
+        if(mounted){  // Check if the widget is still mounted
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Profile Picture Updated Successfully"),backgroundColor: Colors.green,), // Success message
+          );
+        }
+
+
+
+      }catch (e){  // Catch any errors
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to upload image: $e"),backgroundColor: Colors.red,), // Error message
+          );
+        }
+      }finally{
+        setState(() {
+          if(mounted) setState(() {
+            _isUpladingImage = false; // Uploading end
+          });
+        });
+      }
+
+    }
+
     // ✅ Update Profile Fun
-    Future<void> updateProfile() async {
+    Future<void> _updateProfile() async {
       if (_usernameEditController.text.isEmpty ||
           _phoneEditController.text.isEmpty) return;
 
@@ -141,7 +190,7 @@ class _homecontactGState extends State<homecontactG> {
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
-                onPressed: () => updateProfile(),
+                onPressed: () => _updateProfile(),
                 child: const Text("Update"),
               ),
             ],
@@ -178,7 +227,7 @@ class _homecontactGState extends State<homecontactG> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Contact Book"),
+        title: const Text("Profile"),
         actions: [
           TextButton(
             onPressed: () {
@@ -219,35 +268,62 @@ class _homecontactGState extends State<homecontactG> {
           if (userData == null) {
             return const Center(child: Text("User data is empty!"));
           }
+          final profilePictureUrl = userData['profilePicture'] ;
 
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Welcome, ${userData['username'] ?? 'Unknown'}",style: Theme.of(context).textTheme.titleLarge,),
-                Text("Email: ${userData['email'] ?? 'N/A'}"),
-                Text("Phone: ${userData['phone'] ?? 'N/A'}",style: Theme.of(context).textTheme.titleLarge,),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        _showUpdateDialog(userData['username'], userData['phone']);
-                      },
-                      child: Text("UpdateProfile"),
-                    ),
-                    SizedBox(width: 20),
-                    OutlinedButton(
-                      onPressed: () {
-                        _showDeleteDialog();
-                      },
-                      child: Text("DeleteProfile"),
-                    ),
-                  ],
-                ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.grey.shade200,
+                        backgroundImage: profilePictureUrl !=null ? NetworkImage(profilePictureUrl) : null ,   // Display profile picture if available
+                        child: profilePictureUrl == null ? const Icon(Icons.person, size: 60) : null, // Default icon if no profile picture
+                      ),
+                      // Uploading indicator Button
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: FloatingActionButton(
+                            onPressed: _selectAndUploadImage,
+                          tooltip: "Upload Picture",
+                          mini: true,
+                          child: _isUpladingImage ? const Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2,)) : const Icon(Icons.camera_alt, size: 20),
 
-              ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text("Welcome, ${userData['username'] ?? 'Unknown'}",style: Theme.of(context).textTheme.titleLarge,),
+                  Text("Email: ${userData['email'] ?? 'N/A'}"),
+                  Text("Phone: ${userData['phone'] ?? 'N/A'}",style: Theme.of(context).textTheme.titleLarge,),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          _showUpdateDialog(userData['username'], userData['phone']);
+                        },
+                        child: Text("UpdateProfile"),
+                      ),
+                      SizedBox(width: 20),
+                      OutlinedButton(
+                        onPressed: () {
+                          _showDeleteDialog();
+                        },
+                        child: Text("DeleteProfile"),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
             ),
           );
         },
