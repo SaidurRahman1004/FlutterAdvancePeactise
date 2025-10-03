@@ -91,8 +91,10 @@ class AuthGate extends StatelessWidget {
  */
 //.................................................
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
-
-
+//FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'firebase_options.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -100,6 +102,9 @@ void main() async{
   );
   if(kDebugMode){
     try{
+      FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+
+      // Storage Emulator connect
       await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
       print("✅ Firebase Storage Emulator successfully connected!");
     }catch (e){
