@@ -1,0 +1,291 @@
+কোডের বিস্তারিত ব্যাখ্যা 👇
+import 'package:flutter/material.dart';             // Flutter এর UI তৈরির জন্য Material Design লাইব্রেরি
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore Database ব্যবহার করার জন্য
+import 'package:firebase_auth/firebase_auth.dart';     // Firebase Authentication এর জন্য (User ID লাগবে ইমেজ সেভে)
+import 'package:image_picker/image_picker.dart';       // গ্যালারি থেকে ইমেজ বাছাই করার জন্য
+import 'package:provider/provider.dart';               // State Management (এখানে ব্যবহার হয়নি, শুধু import আছে)
+import '../../Custom Widgte/InputTextFeild.dart';      // Custom TextField widget (আপনার তৈরি আলাদা Widget)
+import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage এ ছবি আপলোড করার জন্য
+import 'dart:io';                                      // Local File handle করার জন্য
+
+class contactListWitheFbFirestore extends StatefulWidget {  // Stateful Widget কারণ UI তে ডাটা পরিবর্তন হবে
+  const contactListWitheFbFirestore({super.key});
+
+  @override
+  State<contactListWitheFbFirestore> createState() => _contactListAppState();
+}
+
+class _contactListAppState extends State<contactListWitheFbFirestore> {
+  final _nameController = TextEditingController();    // নাম ইনপুট নেয়ার জন্য Text Controller
+  final _numberController = TextEditingController();  // নাম্বার ইনপুট নেয়ার জন্য Controller
+  bool _isUploading = false;                          // ছবি/ডাটা আপলোড হচ্ছে কিনা সেটা ট্র্যাক করার জন্য
+  File? imageSrchoice;                                // নির্বাচিত ছবি Local File আকারে সেভ হবে
+
+✅ Contact Add করার ফাংশন
+  void _addContact() async {
+    final name = _nameController.text.trim();          // Name field থেকে ইনপুট নেয়া
+    final number = _numberController.text.trim();      // Number field থেকে ইনপুট নেয়া
+    if (name.isNotEmpty && number.isNotEmpty) {        // খালি না হলে Firestore এ সেভ
+      await FirebaseFirestore.instance.collection("ContactList").add({
+        'Name': name,                                  // Name field
+        'Number': number,                              // Number field
+        "timestamp": FieldValue.serverTimestamp(),     // Server time, sorting এর জন্য কাজে লাগবে
+      });
+
+      _nameController.clear();                         // ইনপুট ফিল্ড clear
+      _numberController.clear();
+    }
+  }
+
+✅ Contact Delete ফাংশন
+  _deleteContact(String docId) {
+    showDialog(                                        // Alert Dialog দেখাবে delete করার সময়
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Confirmation"),                   // Dialog এর Title
+        content: Text("Are you sure you want to delete this contact?"),
+        actions: [                                     // দুইটা বাটন → Cancel & Delete
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();             // Cancel করলে dialog বন্ধ
+            },
+            icon: Icon(Icons.close, color: Colors.grey),
+          ),
+          IconButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection("ContactList")
+                  .doc(docId)                           // নির্দিষ্ট ডকুমেন্ট
+                  .delete();                            // Delete করা
+              Navigator.of(context).pop();              // Dialog বন্ধ
+            },
+            icon: Icon(Icons.delete, color: Colors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
+✅ Contact + Image Upload ফাংশন
+  Future<void> _AddAllnNimageSelection() async {
+    final name = _nameController.text.trim();          // Name নেয়া
+    final number = _numberController.text.trim();      // Number নেয়া
+
+    if (name.isEmpty || number.isEmpty) {              // যদি খালি থাকে তাহলে Error Message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Name and Number cannot be empty."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isUploading = true;                             // Progress bar দেখানোর জন্য true
+    });
+
+    try {
+      Map<String, dynamic> noteData = {
+        'Name': name,
+        'Number': number,
+        "timestamp": FieldValue.serverTimestamp(),
+      };
+
+      // যদি ইমেজ সিলেক্ট করা থাকে
+      if (imageSrchoice != null) {
+        final String fileName = DateTime.now().millisecondsSinceEpoch.toString(); // ইউনিক নাম
+        final String filePath =
+            "note_images/${FirebaseAuth.instance.currentUser!.uid}/$fileName.jpg"; // ইউজার অনুযায়ী ফোল্ডারে সেভ
+
+        await FirebaseStorage.instance.ref(filePath).putFile(imageSrchoice!);   // Storage এ আপলোড
+        final downloadUrl =
+        await FirebaseStorage.instance.ref(filePath).getDownloadURL();         // ইমেজের Public URL
+
+        noteData['imageUrl'] = downloadUrl;                                    // Firestore ডাটায় imageUrl ফিল্ড যোগ
+      }
+
+      await FirebaseFirestore.instance.collection("ContactList").add(noteData); // Firestore এ save
+
+      _nameController.clear();
+      _numberController.clear();
+      imageSrchoice = null;                                                    // সব Reset
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Added Successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }  catch (e) {                                                             // Error হলে
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to upload Contact: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;                                                // Uploading শেষ
+        });
+      }
+    }
+  }
+
+✅ ইমেজ Pick করার ফাংশন
+  Future<void> _pickImage() async {
+    final ImagePicker pickimg = ImagePicker();            // ImagePicker instance
+    final XFile? pickedImage = await pickimg.pickImage(
+      source: ImageSource.gallery,                        // গ্যালারি থেকে ইমেজ নেয়া
+    );
+
+    if (pickedImage  == null) return;                     // যদি ইউজার কিছু না বেছে নেয়
+    setState(() {
+      imageSrchoice = File(pickedImage.path);             // Local file এ সেভ
+    });
+  }
+
+✅ UI অংশ
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(                               // Custom Height AppBar
+        preferredSize: Size.fromHeight(100),
+        child: ClipRRect(                                  // Rounded corner AppBar
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: AppBar(
+            title: Text("Contact List"),
+            centerTitle: true,
+            backgroundColor: Colors.blueGrey,
+            foregroundColor: Colors.white,
+          ),
+        ),
+      ),
+
+✅ ইনপুট ফর্ম (Name, Number, Image Select, Add Button)
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                if (_isUploading) const LinearProgressIndicator(),  // Upload progress দেখাবে
+                SizedBox(height: 10),
+                CustomTextField(controller: _nameController, labelText: "Name"),  // Name input
+                SizedBox(height: 10),
+                CustomTextField(
+                  controller: _numberController,
+                  keyboardType: TextInputType.phone,
+                  labelText: "Number",                                            // Number input
+                ),
+                SizedBox(height: 10,),
+                if(imageSrchoice != null)                                        // যদি image select করা হয় preview দেখাবে
+                    Container(
+                      height: 100,
+                      width: 100,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: FileImage(imageSrchoice!),                     // Local image preview
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                OutlinedButton.icon(                                            // Image Pick Button
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.image),
+                  label: const Text("Select Image"),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(                                                 // Add Button
+                  onPressed: _isUploading ? null : _AddAllnNimageSelection,
+                  child: Text("Add "),
+                ),
+              ],
+            ),
+          ),
+
+✅ Firestore থেকে Live Contact List দেখানো
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("ContactList")                  // ContactList collection থেকে Data আনবে
+                  .orderBy("timestamp", descending: true)     // সময় অনুসারে সাজানো
+                  .snapshots(),                               // Live update (Realtime Listener)
+              builder: (_, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());  // Data না আসা পর্যন্ত লোডিং
+                }
+                return ListView.builder(                              // List আকারে দেখাবে
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (_, index) {
+                    final docData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    final imageUrl = docData.containsKey('imageUrl') ? docData['imageUrl'] as String? : null;
+
+                    return Card(
+                      elevation: 5,
+                      child: ListTile(
+                        leading: imageUrl != null && imageUrl.isNotEmpty
+                            ? ClipRRect(                                // যদি image থাকে thumbnail দেখাবে
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            imageUrl,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                            : CircleAvatar(                             // না থাকলে প্রথম অক্ষর
+                          child: Text(docData['Name'][0]),
+                        ),
+                        title: Text(docData["Name"]),                    // Contact Name
+                        subtitle: Text(docData["Number"] ?? ""),         // Contact Number
+                        trailing: Icon(Icons.call, color: Colors.blue),  // Call Icon
+                        onLongPress: () => _deleteContact(snapshot.data!.docs[index].id), // Long press এ delete
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+🔎 সারসংক্ষেপে (What this project does)
+
+এই প্রজেক্টটা হলো একটি Contact List App with Firebase Integration।
+
+👉 এখানে যা হচ্ছে:
+
+Contact Add করা যায় (Name + Number + Optional Image সহ)।
+
+Image Picker দিয়ে গ্যালারি থেকে ছবি বাছাই করা যায়।
+
+ছবি Firebase Storage এ আপলোড হয় → Firestore এ সেই URL সেভ হয়।
+
+Realtime Firestore Listener (StreamBuilder) ব্যবহার করে Contact List Live Update হয়।
+
+মানে নতুন Contact দিলে সাথে সাথে UI তে দেখাবে।
+
+Delete করলে UI থেকে সাথে সাথে চলে যাবে।
+
+প্রতিটি কন্টাক্ট কার্ডে → নাম, নাম্বার, ছবি (না থাকলে নামের প্রথম অক্ষর), আর একটা Call Icon থাকে।
+
+Long Press করলে কন্টাক্ট Delete হয়।
+
+Upload করার সময় Progress Bar দেখাবে।
+
+👉 অর্থাৎ, এটা একটা Firebase ভিত্তিক CRUD Project (Create, Read, Delete + Image Upload)।

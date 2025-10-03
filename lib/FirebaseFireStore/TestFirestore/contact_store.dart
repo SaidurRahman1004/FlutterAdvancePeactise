@@ -28,6 +28,7 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
   bool _isUploading = false;
+  File? imageSrchoice;
 
   //contact add function r
   void _addContact() async {
@@ -76,47 +77,66 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
   }
 
   //Add Profile image fn
-  Future<void> _imageSelection() async {
-    final ImagePicker pickimg = ImagePicker();
-    final XFile? imageSrchoice = await pickimg.pickImage(
-      source: ImageSource.gallery,
-    );
+  Future<void> _AddAllnNimageSelection() async {
 
-    if (imageSrchoice == null) return;
+    //add content
+    final name = _nameController.text.trim();
+    final number = _numberController.text.trim();
+
+    if (name.isEmpty || number.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Name and Number cannot be empty."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     setState(() {
       _isUploading = true;
     });
 
     try {
-      final String Filepath =
-          "note_images/${FirebaseAuth.instance.currentUser!.uid}";
-      final File imageFile = File(imageSrchoice.path);
+      Map<String, dynamic> noteData = {
+        'Name': name,
+        'Number': number,
+        "timestamp": FieldValue.serverTimestamp(),
+      };
 
-      await FirebaseStorage.instance.ref(Filepath).putFile(imageFile);
-      final downloadUrl = await FirebaseStorage.instance
-          .ref(Filepath)
-          .getDownloadURL();
-      await FirebaseFirestore.instance
-          .collection("ContactList")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({"imageUrl": downloadUrl});
+      // Image থাকলে upload হবে
+      if (imageSrchoice != null) {
+        final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        final String filePath =
+            "note_images/${FirebaseAuth.instance.currentUser!.uid}/$fileName.jpg";
+
+        await FirebaseStorage.instance.ref(filePath).putFile(imageSrchoice!);
+        final downloadUrl =
+        await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+
+        noteData['imageUrl'] = downloadUrl;
+      }
+
+      await FirebaseFirestore.instance.collection("ContactList").add(noteData);
+
+      _nameController.clear();
+      _numberController.clear();
+      imageSrchoice = null;
 
       if (mounted) {
-        // Check if the widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Profile Picture Updated Successfully"),
+          const SnackBar(
+            content: Text("Added Successfully"),
             backgroundColor: Colors.green,
-          ), // Success message
+          ),
         );
       }
-    } catch (e) {
+    }  catch (e) {
       if (mounted) {
         // Check if the widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to upload image: $e"),
+            content: Text("Failed to upload Contact: $e"),
             backgroundColor: Colors.red,
           ), // Error message
         );
@@ -129,6 +149,21 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
         });
       }
     }
+  }
+
+  //pick image fn
+  Future<void> _pickImage() async {
+    // Pick image from gallery
+    final ImagePicker pickimg = ImagePicker();
+    final XFile? pickedImage = await pickimg.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedImage  == null) return;
+    setState(() {
+      imageSrchoice = File(pickedImage.path);
+    });
+
   }
 
   @override
@@ -155,6 +190,8 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               children: [
+                if (_isUploading) const LinearProgressIndicator(),
+                SizedBox(height: 10),
                 CustomTextField(controller: _nameController, labelText: "Name"),
                 SizedBox(height: 10),
                 CustomTextField(
@@ -162,11 +199,35 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
                   keyboardType: TextInputType.phone,
                   labelText: "Number",
                 ),
+                SizedBox(height: 10,),
+                if(imageSrchoice != null)
+                    Container(
+                      height: 100,
+                      width: 100,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: FileImage(imageSrchoice!),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                //button for Pick
+                OutlinedButton.icon(
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.image),
+                  label: const Text("Select Image"),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    _addContact();
-                  },
+                  onPressed: _isUploading ? null : _AddAllnNimageSelection,
                   child: Text("Add "),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey,
@@ -193,22 +254,29 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (_, index) {
-                    final dataControl = snapshot.data!.docs[index];
+                    final docData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    final imageUrl = docData.containsKey('imageUrl') ? docData['imageUrl'] as String? : null;
+
                     return Card(
                       elevation: 5,
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.blueGrey,
-                          foregroundColor: Colors.white,
-                          child: Text(
-                            dataControl['Name'][0],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                        leading: imageUrl != null && imageUrl.isNotEmpty
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            imageUrl,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
                           ),
+                        )
+                            : CircleAvatar(
+                          child: Text(docData['Name'][0]),
                         ),
-                        title: Text(dataControl["Name"]),
-                        subtitle: Text(dataControl["Number"] ?? ""),
+                        title: Text(docData["Name"]),
+                        subtitle: Text(docData["Number"] ?? ""),
                         trailing: Icon(Icons.call, color: Colors.blue),
-                        onLongPress: () => _deleteContact(dataControl.id),
+                        onLongPress: () => _deleteContact(snapshot.data!.docs[index].id),
                       ),
                     );
                   },
