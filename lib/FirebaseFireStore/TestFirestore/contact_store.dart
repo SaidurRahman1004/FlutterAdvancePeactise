@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -109,12 +110,24 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
         final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
         final String filePath =
             "note_images/${FirebaseAuth.instance.currentUser!.uid}/$fileName.jpg";
+        final storageRef = FirebaseStorage.instance.ref(filePath);
+        if (kIsWeb) {
+          final XFile pickedImage = XFile(imageSrchoice!.path);
+          final bytes = await pickedImage.readAsBytes();
+          await storageRef.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+        } else {
+          await storageRef.putFile(imageSrchoice!);
+        }
 
-        await FirebaseStorage.instance.ref(filePath).putFile(imageSrchoice!);
+        await storageRef.putFile(imageSrchoice!);
         final downloadUrl =
-        await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+        await storageRef.getDownloadURL();
 
         noteData['imageUrl'] = downloadUrl;
+
+
+
+
       }
 
       await FirebaseFirestore.instance.collection("ContactList").add(noteData);
@@ -160,9 +173,15 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
     );
 
     if (pickedImage  == null) return;
-    setState(() {
-      imageSrchoice = File(pickedImage.path);
-    });
+    if (kIsWeb) {
+      setState(() {
+        imageSrchoice = File(pickedImage.path); // শুধু প্রিভিউর জন্য
+      });
+    } else {
+      setState(() {
+        imageSrchoice = File(pickedImage.path);
+      });
+    }
 
   }
 
