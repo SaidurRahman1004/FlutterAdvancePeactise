@@ -79,8 +79,6 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
 
   //Add Profile image fn
   Future<void> _AddAllnNimageSelection() async {
-
-    //add content
     final name = _nameController.text.trim();
     final number = _numberController.text.trim();
 
@@ -105,29 +103,30 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
         "timestamp": FieldValue.serverTimestamp(),
       };
 
-      // Image থাকলে upload হবে
+      // 🖼️ ইমেজ থাকলে আপলোড হবে
       if (imageSrchoice != null) {
         final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-        final String filePath =
-            "note_images/${FirebaseAuth.instance.currentUser!.uid}/$fileName.jpg";
+        final String filePath = "note_images/$fileName.jpg";
         final storageRef = FirebaseStorage.instance.ref(filePath);
+
+        // 🔥 Mobile & Web আলাদা হ্যান্ডলিং
         if (kIsWeb) {
-          final XFile pickedImage = XFile(imageSrchoice!.path);
-          final bytes = await pickedImage.readAsBytes();
-          await storageRef.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+          // imageSrchoice কে File না ধরে, bytes এ কনভার্ট করবো
+          final imagePicker = ImagePicker();
+          final XFile? pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+
+          if (pickedImage != null) {
+            final bytes = await pickedImage.readAsBytes();
+            await storageRef.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+            final downloadUrl = await storageRef.getDownloadURL();
+            noteData['imageUrl'] = downloadUrl;
+          }
         } else {
+          // 🟢 Mobile upload
           await storageRef.putFile(imageSrchoice!);
+          final downloadUrl = await storageRef.getDownloadURL();
+          noteData['imageUrl'] = downloadUrl;
         }
-
-        await storageRef.putFile(imageSrchoice!);
-        final downloadUrl =
-        await storageRef.getDownloadURL();
-
-        noteData['imageUrl'] = downloadUrl;
-
-
-
-
       }
 
       await FirebaseFirestore.instance.collection("ContactList").add(noteData);
@@ -144,19 +143,17 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
           ),
         );
       }
-    }  catch (e) {
+    } catch (e) {
       if (mounted) {
-        // Check if the widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Failed to upload Contact: $e"),
             backgroundColor: Colors.red,
-          ), // Error message
+          ),
         );
       }
     } finally {
       if (mounted) {
-        // Check if the widget is still mounted
         setState(() {
           _isUploading = false;
         });
@@ -164,26 +161,28 @@ class _contactListAppState extends State<contactListWitheFbFirestore> {
     }
   }
 
+
   //pick image fn
   Future<void> _pickImage() async {
-    // Pick image from gallery
     final ImagePicker pickimg = ImagePicker();
-    final XFile? pickedImage = await pickimg.pickImage(
-      source: ImageSource.gallery,
-    );
+    final XFile? pickedImage = await pickimg.pickImage(source: ImageSource.gallery);
 
-    if (pickedImage  == null) return;
+    if (pickedImage == null) return;
+
     if (kIsWeb) {
+      // Web-এ preview এর জন্য FileImage কাজ করবে না
+      // তাই আমরা শুধুমাত্র preview এর জন্য bytes রাখবো
+      final bytes = await pickedImage.readAsBytes();
       setState(() {
-        imageSrchoice = File(pickedImage.path); // শুধু প্রিভিউর জন্য
+        imageSrchoice = File(pickedImage.path); // just placeholder (web ignored)
       });
     } else {
       setState(() {
         imageSrchoice = File(pickedImage.path);
       });
     }
-
   }
+
 
   @override
   Widget build(BuildContext context) {

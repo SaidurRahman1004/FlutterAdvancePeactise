@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +25,45 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 //////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
 import 'firebase_options.dart'; // flutterfire configure দিয়ে তৈরি হওয়া ফাইল
+
+//new Function For FCM
+// **** নতুন ফাংশন: FCM শুরু এবং কনফিগার করার জন্য ****
+///FCM Token ঃ dz0yalMbRG6gLTP7k2M3jL:APA91bFO4_-FacEIs1evG1kRthe1VOU5X1-5czVKdXg7V1y0R_srE2g-7dMJSn20JM0sD0Y8RW5YBXy9blEElPXFP93FmZwUfPVFB1V0kkQvtdP88KG_Dew
+Future<void> _initializeFCM() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // ১. ব্যবহারকারীর কাছ থেকে নোটিফিকেশনের জন্য অনুমতি চাওয়া
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('✅ User granted permission for notifications');
+  } else {
+    print('❗️ User declined or has not accepted permission');
+  }
+
+  // ২. ডিভাইসের জন্য ইউনিক FCM টোকেন সংগ্রহ করা
+  final String? fcmToken = await messaging.getToken();
+  print('📱 FCM Token: $fcmToken');
+  // TODO: এই টোকেনটি Firestore-এ ব্যবহারকারীর ডকুমেন্টের সাথে সেভ করতে হবে
+  // যাতে আপনি নির্দিষ্ট ব্যবহারকারীকে নোটিফিকেশন পাঠাতে পারেন।
+
+  // ৩. অ্যাপ যখন খোলা (Foreground) অবস্থায় থাকে, তখন নোটিফিকেশন হ্যান্ডেল করা
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('🔔 Got a message whilst in the foreground!');
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification!.title}');
+      // এখানে আপনি একটি কাস্টম ডায়ালগ বা লোকাল নোটিফিকেশন দেখাতে পারেন
+    }
+  });
+}
 /*
 void main() async {
   // Flutter বাইন্ডিং শুরু হয়েছে কিনা তা নিশ্চিত করা
@@ -92,14 +129,13 @@ class AuthGate extends StatelessWidget {
 //.................................................
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
 //FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
-import 'firebase_options.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await _initializeFCM();
   if(kDebugMode){
     try{
       FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
@@ -120,6 +156,8 @@ void main() async{
 }
 
 
+
+
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -127,6 +165,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await _initializeFCM();
 
   runApp(const MyAppFireBaseApiAiTest());
 }
@@ -149,6 +188,8 @@ class MyAppFireBaseApiAiTest extends StatelessWidget {
 }
 
  */
+
+
 
 ////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
 /*
