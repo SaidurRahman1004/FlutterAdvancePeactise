@@ -129,7 +129,7 @@ class AuthGate extends StatelessWidget {
 //.................................................
 //////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\FirebaseFireStore\TestFirestore///
 //FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -154,6 +154,8 @@ void main() async{
     home: contactListWitheFbFirestore(),
   ));
 }
+
+ */
 
 
 
@@ -211,7 +213,7 @@ void main() {
 
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
 //Firebase Emolator  firebase emulators:start --only storage
-/*
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -262,7 +264,7 @@ class AuthGate extends StatelessWidget {
   }
 }
 
- */
+
 
 
 /*

@@ -49,6 +49,18 @@ class _LoginScreenCpGState extends State<LoginScreenCpG> {
   final _textEmail = TextEditingController();
   final _textPassword = TextEditingController();
   bool _isLoading = false;
+  bool _passwordVisible = false;
+  //Password Visibility Function
+  void passwordVisibility(){
+    setState(() {
+      _passwordVisible = !_passwordVisible;
+    });
+    Future.delayed(Duration(seconds: 2),(){
+      setState(() {
+        _passwordVisible = true;
+      });
+    });
+  }
 
   //Sing In Function
   Future<void> _SingIn() async{
@@ -168,8 +180,15 @@ class _LoginScreenCpGState extends State<LoginScreenCpG> {
                               controller: _textPassword,
                               hintText: "Enter Valid Password",
                               labelText: "Password",
-                              obscureText: true,
+                              obscureText: _passwordVisible,
                               keyboardType: TextInputType.visiblePassword,
+                              suffixIcon: IconButton(
+                                  onPressed: passwordVisibility, 
+                                  icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off)
+                              ),
+
+
+
                             ),
                           ),
                           const SizedBox(height: 20),

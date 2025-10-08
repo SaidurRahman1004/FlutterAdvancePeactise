@@ -6,7 +6,7 @@ class CustomTextField extends StatelessWidget {
   final String? labelText;
   final String? hintText;
   final IconData? prefixIcon;
-  final IconData? suffixIcon;
+  final Widget? suffixIcon;
   final VoidCallback? onSuffixIconPressed;
   final bool obscureText;
   final TextInputType? keyboardType;
@@ -55,12 +55,7 @@ class CustomTextField extends StatelessWidget {
             labelText: labelText,
             hintText: hintText,
             prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-            suffixIcon: suffixIcon != null
-                ? IconButton(
-              icon: Icon(suffixIcon),
-              onPressed: onSuffixIconPressed,
-            )
-                : null,
+            suffixIcon: suffixIcon ,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
