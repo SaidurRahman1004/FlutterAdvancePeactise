@@ -1,0 +1,428 @@
+অবশ্যই! আমি আপনাকে সম্পূর্ণ শূন্য থেকে শুরু করে, ধাপে ধাপে এবং বাস্তব API দিয়ে Flutter Riverpod স্টেট ম্যানেজমেন্ট সহজ ভাষায় বুঝিয়ে দেব। আমরা একটা সিম্পল অ্যাপ বানাব যা ইন্টারনেট থেকে একটা র্যান্ডম ডগ পিকচার দেখাবে।
+
+চলুন, শুরু করা যাক!
+
+---
+
+### পর্ব ১: Riverpod কী এবং কেন ব্যবহার করব?
+
+**Riverpod কী?**
+Riverpod (যার পুরো নাম Reversible Dart POjo) হলো একটা স্টেট ম্যানেজমেন্ট লাইব্রেরি। এটা আপনার অ্যাপের ডেটা (স্টেট) কে একটা নিরাপদ জায়গায় রাখে এবং আপনার অ্যাপের যেকোনো জায়গা থেকে সেই ডেটাকে সহজে এবং নির্ভরযোগ্যভাবে ব্যবহার করতে দেয়।
+
+**কেন ব্যবহার করব?**
+আপনি যদি `setState` ব্যবহার করে থাকেন, তাহলে নিশ্চয়ই একটা বড় অ্যাপে ডেটা এদিক-ওদিক পাঠানোর ঝামেলা বুঝতে পেরেছেন। Riverpod সেই ঝামেলা দূর করে।
+
+*   **কোড সহজ হয়:** ডেটা এবং UI এর কোড আলাদা থাকে, যা পড়তে এবং বুঝতে সুবিধা হয়।
+*   **টেস্ট করা সহজ:** ডেটার লজিক আলাদা থাকায়, সেটাকে খুব সহজে টেস্ট করা যায়।
+*   **ডেটা শেয়ার করা সহজ:** অ্যাপের যেকোনো স্ক্রিন থেকে একই ডেটাকে খুব সহজে অ্যাক্সেস করা যায়।
+*   **ক্র্যাশ হওয়ার ঝুঁকি কম:** Riverpod আপনাকে এমন ভুল থেকে বাঁচায় যেখানে উইজেট ট্রি থেকে বাইরে থাকা একটা অবজেক্ট অ্যাক্সেস করতে গিয়ে অ্যাপ ক্র্যাশ করে।
+
+---
+
+### পর্ব ২: সেটআপ (Setup)
+
+একদম নতুন একটা ফ্লাটার প্রজেক্ট নিয়ে নিন।
+
+**ধাপ ১: `pubspec.yaml` ফাইলে প্যাকেজ যোগ করুন**
+
+আপনার প্রজেক্টের `pubspec.yaml` ফাইলটি খুলুন এবং `dependencies:` অংশে নিচের দুটি লাইন যোগ করুন।
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.4.9  # Riverpod এর মূল প্যাকেজ
+  http: ^1.1.0             # API কল করার জন্য
+```
+
+**ধাপ ২: প্যাকেজ ইনস্টল করুন**
+
+টার্মিনালে নিচের কমান্ডটি রান করুন:
+```bash
+flutter pub get
+```
+
+**ধাপ ৩: `main.dart` ফাইলকে Riverpod এর জন্য তৈরি করুন**
+
+আপনার `lib/main.dart` ফাইলটি খুলুন। আপনাকে আপনার অ্যাপের রুট উইজেটকে Riverpod এর স্কোপের ভেতরে নিয়ে আসতে হবে। এর জন্য `ProviderScope` ব্যবহার করতে হয়।
+
+```dart
+// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod ইম্পোর্ট করুন
+
+// আপনার মূল অ্যাপ উইজেট
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Riverpod Dog API',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const DogScreen(),
+    );
+  }
+}
+
+// মেইন ফাংশন
+void main() {
+  // আপনার অ্যাপকে ProviderScope দিয়ে র্যাপ করুন
+  // এটা Riverpod এর সব কিছু ম্যানেজ করার জন্য খুবই জরুরি
+  runApp(
+    const ProviderScope( // এই লাইনটি যোগ করুন
+      child: MyApp(),
+    ),
+  );
+}
+```
+
+**কোডে কি হলো?**
+*   `flutter_riverpod` প্যাকেজটি আমরা ইম্পোর্ট করেছি।
+*   `runApp()` এর ভেতরে আমরা আমাদের `MyApp` উইজেটকে `ProviderScope` দিয়ে মুড়ে দিয়েছি। এটাকে একটা বড় ছাতা মনে করতে পারেন, যার নিচে আপনার অ্যাপের সব স্টেট নিরাপদে থাকবে।
+
+---
+
+### পর্ব ৩: বেসিক কনসেপ্ট - প্রোভাইডার (Provider)
+
+Riverpod এর সবচেয়ে গুরুত্বপূর্ণ জিনিস হলো **প্রোভাইডার**। প্রোভাইডার হলো একটা নিয়ম বা রেসিপি, যেটা বলে দেয় যে কিভাবে একটা নির্দিষ্ট ডেটা বা স্টেট (যেমন একটা স্ট্রিং, একটা অবজেক্ট, বা একটা API রেসপন্স) তৈরি করতে হবে।
+
+যখনই আপনি একটা প্রোভাইডার ডিফাইন করবেন, Riverpod সেটাকে আপনার অ্যাপের গ্লোবাল ডেটা ব্যাংকে রেখে দেয়। আপনি যখন সেই ডেটার দরকার পড়বেন, আপনি শুধু বলবেন, "হে Riverpod, এই প্রোভাইডার থেকে ডেটা দাও।"
+
+**সবচেয়ে সহজ প্রোভাইডার: `Provider`**
+
+এটা ব্যবহার করা হয় এমন ডেটার জন্য যা কখনো পরিবর্তন হয় না (immutable)। যেমন একটা API এর URL বা অ্যাপের কোনো কনফিগারেশন।
+
+আসুন আমরা আমাদের ডগ API এর URL কে একটা প্রোভাইডার হিসেবে ডিফাইন করি। একটা নতুন ফাইল বানান `lib/dog_provider.dart`।
+
+```dart
+// lib/dog_provider.dart
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// এটা একটা প্রোভাইডার ডিফাইন করছে
+// এটা একটা স্ট্রিং ভ্যালু প্রভাইড করবে যা কখনো পরিবর্তন হবে না
+final dogApiUrlProvider = Provider<String>((ref) {
+  // 'ref' হলো একটা অবজেক্ট যেটা প্রোভাইডারকে অন্য প্রোভাইডার বা Riverpod এর ফিচার দেখতে দেয়
+  return 'https://dog.ceo/api/breeds/image/random';
+});
+```
+
+**কোডে কি হলো?**
+*   `dogApiUrlProvider` নামে আমরা একটা গ্লোবাল ভেরিয়েবল ডিক্লেয়ার করেছি।
+*   `Provider<String>((ref) { ... })` দিয়ে আমরা বলে দিচ্ছি যে এটা একটা প্রোভাইডার যা একটা `String` টাইপের ডেটা দেবে।
+*   প্রোভাইডারটি আমাদের ডগ API এর URL টা রিটার্ন করছে। এখন আমরা আমাদের অ্যাপের যেকোনো জায়গায় `dogApiUrlProvider` ব্যবহার করে এই URL টা পেতে পারব।
+
+---
+
+### পর্ব ৪: বাস্তব উদাহরণ - API থেকে ডেটা লোড করা
+
+এখন আসল কাজে আসা যাক। আমরা একটা API কল করে ডগের ছবি আনব এবং সেটা স্ক্রিনে দেখাব। এজন্য আমাদের এমন একটা প্রোভাইডার লাগবে যা অ্যাসিনক্রোনাসলি কাজ করে।
+
+**ধাপ ১: মডেল ক্লাস তৈরি করুন**
+
+API রেসপন্সটা হ্যান্ডেল করার জন্য একটা মডেল ক্লাস বানানো ভালো অভ্যাস। একটা নতুন ফাইল বানান `lib/dog_model.dart`।
+
+```dart
+// lib/dog_model.dart
+
+class DogImage {
+  final String message; // ছবির URL
+  final String status;
+
+  DogImage({required this.message, required this.status});
+
+  // JSON থেকে অবজেক্ট বানানোর জন্য একটা ফ্যাক্টরি কনস্ট্রাক্টর
+  factory DogImage.fromJson(Map<String, dynamic> json) {
+    return DogImage(
+      message: json['message'],
+      status: json['status'],
+    );
+  }
+}
+```
+
+**ধাপ ২: ফিউচার প্রোভাইডার তৈরি করুন**
+
+API কল একটা অ্যাসিনক্রোনাস কাজ, যা ভবিষ্যৎ (Future) এ একটা রেজাল্ট দেয়। এর জন্য Riverpod এর `FutureProvider` ব্যবহার করা হয়। এটা লোডিং, সাকসেস, এবং এরর অবস্থা নিজে থেকেই ম্যানেজ করে ফেলে।
+
+আপনার `lib/dog_provider.dart` ফাইলে নিচের কোডটি যোগ করুন।
+
+```dart
+// lib/dog_provider.dart
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http; // http প্যাকেজ ইম্পোর্ট
+import 'dart:convert'; // json ডিকোড করার জন্য
+import 'dog_model.dart'; // আমাদের মডেল ক্লাস
+
+// ... আগের dogApiUrlProvider থাকবে ...
+
+// এটা একটা ফিউচার প্রোভাইডার যা অ্যাসিনক্রোনাসলে ডগের ছবির ডেটা আনবে
+final dogImageProvider = FutureProvider<DogImage>((ref) async {
+  // আমরা আগে থেকে তৈরি করা dogApiUrlProvider থেকে URL টা পাচ্ছি
+  final url = ref.read(dogApiUrlProvider); // ref.read() দিয়ে একবার ডেটা পড়া হয়
+
+  // http প্যাকেজ দিয়ে API কল করছি
+  final response = await http.get(Uri.parse(url));
+
+  // যদি রেসপন্স সফল হয় (status code 200)
+  if (response.statusCode == 200) {
+    // JSON ডেটাকে আমাদের DogImage মডেলে কনভার্ট করছি
+    return DogImage.fromJson(json.decode(response.body));
+  } else {
+    // যদি কোনো এরর হয়, তাহলে একটা এক্সেপশন থ্রো করছি
+    throw Exception('Failed to load dog image');
+  }
+});
+```
+
+**কোডে কি হলো?**
+*   `FutureProvider<DogImage>`: আমরা বলে দিচ্ছি যে এই প্রোভাইডারটি ভবিষ্যতে একটা `DogImage` অবজেক্ট দেবে।
+*   `ref.read(dogApiUrlProvider)`: এটা একটা খুবই শক্তিশালী ফিচার। আমরা আমাদের `dogImageProvider` এর ভেতর থেকে আরেকটা প্রোভাইডার (`dogApiUrlProvider`) এর ডেটা পড়ছি। এটাই প্রোভাইডারের মূল শক্তি।
+*   বাকি অংশে আমরা সাধারণ HTTP GET রিকোয়েস্ট পাঠিয়ে রেসপন্স পাচ্ছি এবং সেটাকে আমাদের `DogImage` মডেলে কনভার্ট করছি। কোনো সমস্যা হলে `Exception` থ্রো করছি।
+
+---
+
+### পর্ব ৫: UI তে ডেটা দেখানো
+
+এখন আমাদের UI তে এসে প্রোভাইডার থেকে ডেটা দেখানোর পালা। এর জন্য আমাদের উইজেটকে `ConsumerWidget` বানাতে হবে।
+
+`ConsumerWidget` হলো একটা `StatelessWidget` যা Riverpod এর স্টেট পরিবর্তনের খবর রাখে এবং স্টেট পরিবর্তন হলে নিজে থেকেই রিবিল্ড হয়ে যায়।
+
+আপনার `lib/main.dart` ফাইলে একটা নতুন উইজেট বানান।
+
+```dart
+// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dog_provider.dart'; // আমাদের প্রোভাইডার ইম্পোর্ট করুন
+
+// ... MyApp এবং main ফাংশন আগের মতোই থাকবে ...
+
+// এটা একটা ConsumerWidget, যা Riverpod এর স্টেট দেখতে পারে
+class DogScreen extends ConsumerWidget {
+  const DogScreen({super.key});
+
+  @override
+  // build মেথডে এখন WidgetRef টাইপের একটা 'ref' প্যারামিটার আসে
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch() দিয়ে আমরা dogImageProvider এর স্টেট দেখছি
+    // যখনই এই প্রোভাইডারের স্টেট পরিবর্তন হবে (যেমন লোডিং থেকে সাকসেস হবে),
+    // তখনই এই build মেথডটি আবার কল হবে
+    final dogImageAsyncValue = ref.watch(dogImageProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riverpod Dog API'),
+      ),
+      body: Center(
+        // AsyncValue হলো একটা স্পেশাল ক্লাস যা FutureProvider এর লোডিং, ডেটা, এবং এরর অবস্থা ধারণ করে
+        // when() মেথড দিয়ে আমরা তিনটি অবস্থাই হ্যান্ডেল করতে পারি
+        child: dogImageAsyncValue.when(
+          data: (dogImage) {
+            // ডেটা সফলভাবে এলে এই অংশটি দেখাবে
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.network(
+                  dogImage.message, // ডগের ছবির URL
+                  height: 300,
+                  width: 300,
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Status: ${dogImage.status}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            );
+          },
+          loading: () {
+            // ডেটা লোড হচ্ছে এই অবস্থায় এটি দেখাবে
+            return const CircularProgressIndicator();
+          },
+          error: (error, stack) {
+            // কোনো এরর হলে এই অংশটি দেখাবে
+            return Text('Error: $error');
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // বাটন চাপলে আমরা প্রোভাইডারকে রিফ্রেশ করব
+          // এটা API টাকে আবার কল করতে বাধ্য করবে এবং একটা নতুন ডগের ছবি আনবে
+          ref.invalidate(dogImageProvider);
+        },
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+}
+```
+
+**কোডে কি হলো?**
+*   `ConsumerWidget`: আমরা `StatelessWidget` এর পরিবর্তে `ConsumerWidget` ব্যবহার করেছি। এর `build` মেথডে আমরা `WidgetRef` নামে একটা অতিরিক্ত প্যারামিটার পাই, যা আমাদের প্রোভাইডারদের সাথে কথা বলতে সাহায্য করে।
+*   `ref.watch(dogImageProvider)`: এটি সবচেয়ে গুরুত্বপূর্ণ লাইন। আমরা `ref.watch` দিয়ে `dogImageProvider` কে দেখছি। এর মানে হলো, "হে Riverpod, তুমি এই প্রোভাইডারের উপর নজর রাখো। যদি এর কোনো পরিবর্তন হয়, আমাকে জানিয়ে দিও যেন আমি UI টা আপডেট করতে পারি।"
+*   `dogImageAsyncValue.when(...)`: `FutureProvider` আমাদের একটা `AsyncValue` অবজেক্ট দেয়। এই অবজেক্টের ভেতর তিনটা অবস্থা থাকতে পারে: `data` (ডেটা এসেছে), `loading` (ডেটা আসছে), এবং `error` (এরর হয়েছে)। `when()` মেথড আমাদের এই তিনটি অবস্থার জন্য আলাদাভাবে UI তৈরি করতে দেয়।
+*   `ref.invalidate(dogImageProvider)`: ফ্লোটিং অ্যাকশন বাটনে ক্লিক করলে আমরা `ref.invalidate` কল করছি। এটা `dogImageProvider` কে অবৈধ ঘোষণা করে। ফলে Riverpod বুঝতে পারে যে ডেটাটা আর বর্তমান নয় এবং এটাকে আবার নতুন করে তৈরি করতে হবে, যার ফলে API টা আবার কল হয় এবং একটা নতুন ছবি আসে।
+
+এখন আপনার অ্যাপটি রান করুন। আপনি দেখতে পাবেন যে প্রথমে একটা লোডিং স্পিনার আসবে, তারপর ডগের ছবি দেখাবে। রিফ্রেশ বাটনে চাপলে নতুন ছবি আসবে। যদি ইন্টারনেট সংযোগ না থাকে, তাহলে এরর মেসেজ দেখাবে।
+
+---
+
+### পর্ব ৬: এডভান্স কনসেপ্ট - স্টেট আপডেট করা (StateNotifierProvider)
+
+ধরুন, আমরা একটা কাউন্টার বানাতে চাই যেখানে একটা বাটনে ক্লিক করলে সংখ্যা বাড়বে। এটা একটা স্টেট পরিবর্তনের কাজ। এর জন্য `StateNotifierProvider` ব্যবহার করা হয়, যা আরও জটিল এবং পরিবর্তনশীল স্টেট ম্যানেজ করার জন্য খুবই শক্তিশালী।
+
+**ধাপ ১: একটা নতুন ফাইল বানান `lib/counter_provider.dart`**
+
+```dart
+// lib/counter_provider.dart
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// এটা হলো আমাদের স্টেট যা আমরা ম্যানেজ করব (এখানে একটা সাধারণ int)
+class CounterState {
+  int value;
+  CounterState(this.value);
+}
+
+// এটা হলো আমাদের ক্লাস যেটা স্টেট পরিবর্তনের লজিক ধারণ করে
+// এটা StateNotifier কে এক্সটেন্ড করে
+class CounterNotifier extends StateNotifier<CounterState> {
+  // ইনিশিয়ালাইজেশনের সময় আমরা স্টেটের একটা শুরুর মান দিচ্ছি
+  CounterNotifier() : super(CounterState(0));
+
+  // স্টেট পরিবর্তন করার জন্য একটা মেথড
+  void increment() {
+    // state হলো StateNotifier এর একটা বিল্ট-ইন প্রপার্টি
+    // আমরা এটার ভ্যালু পরিবর্তন করলে, যেসব UI এই প্রোভাইডারকে watch করছে, সবগুলো রিবিল্ড হয়ে যাবে
+    state = CounterState(state.value + 1);
+  }
+}
+
+// এখন আমরা প্রোভাইডারটি ডিফাইন করব
+// এটা আমাদের CounterNotifier কে অ্যাপের সাথে যুক্ত করবে
+final counterProvider = StateNotifierProvider<CounterNotifier, CounterState>((ref) {
+  return CounterNotifier();
+});
+```
+
+**কোডে কি হলো?**
+*   `CounterState`: আমরা আমাদের কাউন্টারের মান রাখার জন্য একটা ক্লাস বানিয়েছি। এটা করা ভালো প্র্যাকটিস, কারণ ভবিষ্যতে আপনি যদি কাউন্টারের আরও কিছু প্রপার্টি (যেমন এটা রিসেট করা যাবে কিনা) যোগ করতে চান, তাহলে এই ক্লাসেই যোগ করতে পারবেন।
+*   `CounterNotifier`: এটাই আসল কাজ করে। এটা `StateNotifier` কে এক্সটেন্ড করেছে এবং এর ভেতরে আমাদের স্টেট পরিবর্তনের লজিক (`increment` মেথড) আছে।
+*   `state = ...`: যখনই আমরা `state` প্রপার্টির মান বদলাই, Riverpod সব শুনে ফেলে এবং যেসব উইজেট এই প্রোভাইডারকে `watch` করছে, তাদের আপডেট করে দেয়।
+*   `counterProvider`: এই প্রোভাইডারটি আমাদের `CounterNotifier` কে অ্যাপের বাকি অংশের কাছে উপলব্ধ করায়।
+
+**ধাপ ২: UI তে কাউন্টারটি যোগ করুন**
+
+আপনার `lib/main.dart` এ `DogScreen` এর নিচে একটা `Column` এর ভেতর কাউন্টারটি যোগ করুন।
+
+```dart
+// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dog_provider.dart';
+import 'counter_provider.dart'; // কাউন্টার প্রোভাইডার ইম্পোর্ট করুন
+
+// ... DogScreen উইজেটের body অংশটি পরিবর্তন করুন ...
+
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // ডগের ছবির অংশ
+            Expanded(
+              child: dogImageAsyncValue.when(
+                data: (dogImage) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.network(
+                        dogImage.message,
+                        height: 250,
+                        width: 250,
+                        fit: BoxFit.cover,
+                      ),
+                      Text('Status: ${dogImage.status}'),
+                    ],
+                  );
+                },
+                loading: () => const CircularProgressIndicator(),
+                error: (error, stack) => Text('Error: $error'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // কাউন্টারের অংশ
+            const Text('You have pushed the button this many times:'),
+            // আমরা আবার ref.watch দিয়ে আমাদের counterProvider কে দেখছি
+            Consumer(
+              builder: (context, ref, child) {
+                final counterState = ref.watch(counterProvider);
+                // আমরা শুধু counterState.value টা দেখাচ্ছি
+                return Text(
+                  counterState.value.toString(),
+                  style: Theme.of(context).textTheme.headlineMedium,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // ডগের ছবি রিফ্রেশ করার জন্য
+          ref.invalidate(dogImageProvider);
+        },
+        child: const Icon(Icons.refresh),
+      ),
+      // আমরা আরেকটা ফ্লোটিং অ্যাকশন বাটন যোগ করব কাউন্টার বাড়ানোর জন্য
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Container(
+          height: 50.0,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // কাউন্টার বাড়ানোর বাটন
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  // ref.read() দিয়ে আমরা প্রোভাইডারের মেথড কল করতে পারি
+                  // এখানে আমরা CounterNotifier এর increment মেথড কল করছি
+                  ref.read(counterProvider.notifier).increment();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+```
+
+**কোডে কি হলো?**
+*   `ref.watch(counterProvider)`: আমরা আবার `ref.watch` ব্যবহার করে কাউন্টারের বর্তমান মান দেখছি। যখনই কাউন্টারের মান পরিবর্তন হবে, এই `Text` উইজেটটি আপডেট হয়ে যাবে।
+*   `ref.read(counterProvider.notifier).increment()`: এখানে `ref.read` ব্যবহার করা হয়েছে কারণ আমরা শুধু একটা ইভেন্ট (বাটন প্রেস) এর সময় একবার `increment` মেথডটি কল করতে চাই। আমরা এর রেজাল্ট দেখে উইজেট রিবিল্ড করতে চাই না। `.notifier` দিয়ে আমরা `CounterNotifier` অবজেক্টটি পাচ্ছি এবং তার মেথড কল করতে পারছি।
+
+এখন অ্যাপটি রান করুন। আপনি ডগের ছবির নিচে একটা কাউন্টার দেখতে পাবেন এবং বাটন চাপলে সংখ্যা বাড়বে।
+
+### সারসংক্ষেপ
+
+আজ আমরা শিখেছি:
+
+1.  **সেটআপ:** কিভাবে একটা প্রজেক্টে Riverpod যোগ করতে হয় (`ProviderScope`)।
+2.  **বেসিক প্রোভাইডার:** কিভাবে `Provider` দিয়ে স্থির ডেটা রাখতে হয়।
+3.  **এসিনক্রোনাস ডেটা:** কিভাবে `FutureProvider` দিয়ে API থেকে ডেটা আনা যায় এবং লোডিং, এরর হ্যান্ডেল করা যায়।
+4.  **UI আপডেট:** কিভাবে `ConsumerWidget` এবং `ref.watch` দিয়ে UI কে স্টেটের সাথে যুক্ত করা যায়।
+5.  **স্টেট পরিবর্তন:** কিভাবে `StateNotifierProvider` দিয়ে ব্যবহারকারীর ইন্টারঅ্যাকশনের উপর ভিত্তি করে স্টেট পরিবর্তন করা যায়।
+6.  **ইভেন্ট ট্রিগার:** কিভাবে `ref.read` এবং `ref.invalidate` দিয়ে প্রোভাইডারের মেথড কল করা বা রিফ্রেশ করা যায়।
+
+Riverpod একটি অত্যন্ত শক্তিশালী লাইব্রেরি। এটি আপনার অ্যাপকে আরও স্কেলেবল, টেস্টেবল এবং রক্ষণাত্মক করে তুলবে। আজকের উদাহরণগুলো অনুশীলন করে দেখুন, আশা করি আপনি Riverpod এর মূল ধারণা সহজেই আয়ত্ত করতে পারবেন।

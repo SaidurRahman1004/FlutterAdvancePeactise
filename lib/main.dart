@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
 import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projects.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'RiverpodEx/riverpodex.dart';
 import 'firebase_options.dart';
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
 import 'FirebaseFireStore/TestFirestore/contact_store.dart';
@@ -30,6 +32,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 //////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
 import 'firebase_options.dart'; // flutterfire configure দিয়ে তৈরি হওয়া ফাইল
 
+////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\riverpodex.dart/////////////////
+
+void main() {
+  runApp( ProviderScope(child: MaterialApp(home: RiverpodApiExUi())));
+}
+
+
+/////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\riverpodex.dart/////////////////////////
+/*
 //new Function For FCM
 // **** নতুন ফাংশন: FCM শুরু এবং কনফিগার করার জন্য ****
 ///FCM Token ঃ dz0yalMbRG6gLTP7k2M3jL:APA91bFO4_-FacEIs1evG1kRthe1VOU5X1-5czVKdXg7V1y0R_srE2g-7dMJSn20JM0sD0Y8RW5YBXy9blEElPXFP93FmZwUfPVFB1V0kkQvtdP88KG_Dew
@@ -64,6 +75,10 @@ Future<void> _initializeFCM() async {
     }
   });
 }
+
+ */
+
+/////////
 /*
 void main() async {
   // Flutter বাইন্ডিং শুরু হয়েছে কিনা তা নিশ্চিত করা
@@ -213,8 +228,7 @@ void main() {
 
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
 //Firebase Emolator  firebase emulators:start --only storage
-
-
+/*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -263,6 +277,10 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
+
+ */
+
+
 
 
 
