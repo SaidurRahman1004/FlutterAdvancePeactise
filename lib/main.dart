@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
@@ -9,6 +10,8 @@ import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projec
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'BlocCubitEx/Bloc_Cubit_with_API/Screens/ProductUi.dart';
+import 'BlocCubitEx/Bloc_Cubit_with_API/cubits/product_cubit.dart';
 import 'RiverpodEx/riverpodex.dart';
 import 'firebase_options.dart';
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
@@ -29,14 +32,31 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-//////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
-import 'firebase_options.dart'; // flutterfire configure দিয়ে তৈরি হওয়া ফাইল
+////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\BlocCubitEx\Bloc_Cubit_with_API////
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: BlocProvider(
+          create: (_)=> ProductCubit(),
+          child: const ProductCubitExUi()
 
+      ),
+
+    )
+  );
+}
+////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\BlocCubitEx\Bloc_Cubit_with_API////
+
+//////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
+/*
 ////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\riverpodex.dart/////////////////
 
 void main() {
   runApp( ProviderScope(child: MaterialApp(home: RiverpodApiExUi())));
 }
+
+ */
 
 
 /////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\riverpodex.dart/////////////////////////
