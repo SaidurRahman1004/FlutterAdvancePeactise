@@ -29,9 +29,11 @@ dependencies:
   google_sign_in: ^6.2.1
   shared_preferences: ^2.5.3
   image_picker: ^1.2.0
-  flutter_riverpod: ^3.0.3
+  flutter_riverpod: ^2.5.1
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
+  freezed_annotation: ^2.4.1
+
 
 
 
@@ -42,6 +44,8 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^2.0.1 # TypeAdapter জেনারেট করার জন্য
   build_runner: ^2.4.9
+  freezed: ^2.4.1
+  json_serializable: ^6.7.1
 
 
   flutter_lints: ^5.0.0

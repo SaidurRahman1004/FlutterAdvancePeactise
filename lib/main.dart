@@ -12,6 +12,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/Screens/ProductUi.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/cubits/product_cubit.dart';
+import 'RiverpodEx/StateNotifier_Freezed Model/product_ui.dart';
 import 'RiverpodEx/riverpodex.dart';
 import 'firebase_options.dart';
 import 'Custom Widgte/CotactListFnDumpOstad.dart';
@@ -31,8 +32,29 @@ import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+/////////////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\StateNotifier_Freezed Model///////////////////
+
+void main() {
+  runApp(
+    ProviderScope(child: MyApp())
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ProductScreen(),
+
+    );
+  }
+}
 
 ////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\BlocCubitEx\Bloc_Cubit_with_API////
+/*
 void main() {
   runApp(
     MaterialApp(
@@ -46,6 +68,8 @@ void main() {
     )
   );
 }
+
+ */
 ////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\BlocCubitEx\Bloc_Cubit_with_API////
 
 //////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\FullCurdAiReGen///
@@ -555,11 +579,4 @@ void main() async { // 3. main() ফাংশনকে async করুন
  */
 // আপনার বাকি কোড (যেমন MyApp ক্লাস) অপরিবর্তিত থাকতে পারে
 //Temp
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
