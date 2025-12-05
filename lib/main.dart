@@ -6,12 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
+import 'package:fluttert_test_code/ProviderAndAPICleanStracture/main.dart';
 import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projects.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/Screens/ProductUi.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/cubits/product_cubit.dart';
+import 'RiverPoDCleanArchitecher/presentation/screens/product_screen.dart';
 import 'RiverpodEx/StateNotifier_Freezed Model/product_ui.dart';
 import 'RiverpodEx/riverpodex.dart';
 import 'firebase_options.dart';
@@ -32,8 +34,29 @@ import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-/////////////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\StateNotifier_Freezed Model///////////////////
 
+
+/////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverPoDCleanArchitecher.........................../////////
+void main() {
+  runApp(
+    ProviderScope(child: ProMyApp())
+  );
+}
+
+class ProMyApp extends StatelessWidget {
+  const ProMyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ProductUi(),
+
+    );
+  }
+////////////////////////////////////////////
+/////////////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\StateNotifier_Freezed Model///////////////////
+/*
 void main() {
   runApp(
     ProviderScope(child: MyApp())
@@ -52,6 +75,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+ */
 
 ////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\BlocCubitEx\Bloc_Cubit_with_API////
 /*
@@ -217,8 +242,6 @@ void main() async{
  */
 
 
-
-
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -251,7 +274,6 @@ class MyAppFireBaseApiAiTest extends StatelessWidget {
  */
 
 
-
 ////D:\CodesApplication\Flutter\fluttert_test_code\lib\StateManageMentExtra\Provider_with_api_projects.dart/////////////////////
 /*
 void main() {
@@ -267,7 +289,6 @@ void main() {
 }
 
  */
-
 
 
 //......................D:\CodesApplication\Flutter\fluttert_test_code\lib\firebase All\Firebase Google Auth............................................
@@ -323,10 +344,6 @@ class AuthGate extends StatelessWidget {
 }
 
  */
-
-
-
-
 
 
 /*
@@ -579,4 +596,4 @@ void main() async { // 3. main() ফাংশনকে async করুন
  */
 // আপনার বাকি কোড (যেমন MyApp ক্লাস) অপরিবর্তিত থাকতে পারে
 //Temp
-
+}
