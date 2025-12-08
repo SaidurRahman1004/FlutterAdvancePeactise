@@ -7,12 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_app_model.dart';
 import 'package:fluttert_test_code/HivePracTiseAll/NoteApp/note_ui.dart';
 import 'package:fluttert_test_code/ProviderAndAPICleanStracture/main.dart';
+import 'package:fluttert_test_code/ProviderWithInheritedWidgetBasic/Presentation/Provider/counter_provider.dart';
 import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projects.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/Screens/ProductUi.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/cubits/product_cubit.dart';
+import 'ProviderWithInheritedWidgetBasic/Presentation/Provider/Inherite_widget.dart';
+import 'ProviderWithInheritedWidgetBasic/Presentation/Screen/screen_one.dart';
 import 'RiverPoDCleanArchitecher/presentation/screens/product_screen.dart';
 import 'RiverpodEx/StateNotifier_Freezed Model/product_ui.dart';
 import 'RiverpodEx/riverpodex.dart';
@@ -35,8 +38,31 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+/////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\ProviderWithInheritedWidgetBasic.........................../////////
+void main() {
+  runApp(
+      ProviderScope(child: providerApp())
+  );
+}
+
+class providerApp extends StatelessWidget {
+  const providerApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CounterProviderInheriteWigget(
+      counterProvider: CounterProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: firstCounter(),
+
+      ),
+    );
+  }
+////////////////////////////////////////////
 
 /////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverPoDCleanArchitecher.........................../////////
+/*
 void main() {
   runApp(
     ProviderScope(child: ProMyApp())
@@ -54,6 +80,8 @@ class ProMyApp extends StatelessWidget {
 
     );
   }
+
+ */
 ////////////////////////////////////////////
 /////////////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverpodEx\StateNotifier_Freezed Model///////////////////
 /*
