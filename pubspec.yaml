@@ -33,6 +33,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
   freezed_annotation: ^2.4.1
+  get: ^4.7.3
+  local_auth: ^3.0.0
 
 
 

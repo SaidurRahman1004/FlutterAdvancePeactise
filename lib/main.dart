@@ -12,6 +12,7 @@ import 'package:fluttert_test_code/StateManageMentExtra/Provider_with_api_projec
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'Biometric/biometric_authentication.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/Screens/ProductUi.dart';
 import 'BlocCubitEx/Bloc_Cubit_with_API/cubits/product_cubit.dart';
 import 'ProviderWithInheritedWidgetBasic/Presentation/Provider/Inherite_widget.dart';
@@ -38,7 +39,20 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+
+//////////////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\Biometric/////////////////////
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: HomescreenAuth(),
+    )
+  );
+
+}
+
 /////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\ProviderWithInheritedWidgetBasic.........................../////////
+/*
 void main() {
   runApp(
       ProviderScope(child: providerApp())
@@ -59,6 +73,8 @@ class providerApp extends StatelessWidget {
       ),
     );
   }
+
+ */
 ////////////////////////////////////////////
 
 /////////////////////////////D:\CodesApplication\Flutter\fluttert_test_code\lib\RiverPoDCleanArchitecher.........................../////////
@@ -624,4 +640,4 @@ void main() async { // 3. main() ফাংশনকে async করুন
  */
 // আপনার বাকি কোড (যেমন MyApp ক্লাস) অপরিবর্তিত থাকতে পারে
 //Temp
-}
+
